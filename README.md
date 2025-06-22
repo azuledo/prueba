@@ -420,11 +420,6 @@
       ]
     },
     {
-  "name": "dateDomain",
-  "update": "extent(pluck(data('Tabla1'), 'startDate'))"
-}
-,
-    {
       "name": "dateStepSizePercent",
       "init": "configDateStepSizePercentInital",
       "on": [
@@ -539,20 +534,18 @@
       "name": "ganttDomain",
       "description": "the domain used in the x-axis scale for the Gantt",
       "update": "extent(pluck(data('date'), 'date'))"
-    },{
+    },
+    {
   "name": "today",
-  "update": "datetime(year(now()), month(now()), date(now()))"
+  "update": "datetime(year(now()), month(now()), date(now()) - 1, 12, 0, 0)"
 },{
   "name": "timeExtent",
-  "update": "[time(data('dateExtent')[0].minDate), time(data('dateExtent')[0].maxDate)]"
+  "update": "extent(data('ganttData'), 'time(datum.startDate)')"
 }
-
-
 ,{
   "name": "scrollToTodayPercent",
   "description": "Centrar vista en HOY ±5 días dentro de ganttRange",
-    "update": "clamp((time(today) - 5 * dayInMilliseconds - time(dateDomain[0])) / (time(dateDomain[1]) - time(dateDomain[0])), 0, 1)"
-,
+  "update": "clamp((time(today) - ganttRange[0] - 5*24*60*60*1000) / (ganttRange[1] - ganttRange[0]), 0, 1)",
   "on": [
     {
       "events": "@reset_slider_granularity_interactivity_rect:pointerdown",
@@ -2383,23 +2376,6 @@
     {"monthAbbrev": "Dec", "daysInMonth": 31, "monthAbbrevEs": "Dic"}
   ]
 },
-{
-  "name": "dateExtent",
-  "source": "dataset",
-  "transform": [
-    {
-      "type": "filter",
-      "expr": "isValid(datum.startDate)"
-    },
-    {
-      "type": "aggregate",
-      "fields": ["startDate", "startDate"],
-      "ops": ["min", "max"],
-      "as": ["minDate", "maxDate"]
-    }
-  ]
-}
-,
     {
       "name": "dateWindowSize",
       "source": "allDates",
@@ -2855,7 +2831,7 @@
       "transform": [
         {
           "type": "formula",
-          "expr": "toDate(utcFormat(now(), '%m/%d/%Y'))",
+          "expr": "timeOffset('day', toDate(utcFormat(now(), '%m/%d/%Y')), -1)",
           "as": "date"
         },
         {
