@@ -91,12 +91,12 @@
     {
       "name": "configColumn",
       "description": "configurations for the columns that appear to the left of the Gantt",
-      "init": "{xOffset: 5, innerPadding: 25, columns: {'taskTitle': {allowableWidth: 450, font: 'Segoe UI', fontSize: 14, align: 'left', fontWeight: 600}, 'startDate': {allowableWidth: 55, font: 'Segoe UI', fontSize: 12, align: 'right'}, 'endDate': {allowableWidth: 55, font: 'Segoe UI', fontSize: 12, align: 'right'}, 'duration': {allowableWidth: 45, font: 'Segoe UI', fontSize: 12, 'align': 'right'}, 'progress': {allowableWidth: 56, font: 'Segoe UI', fontSize: 12, cornerRadius: 2.5}}}"
+      "init": "{xOffset: 5, innerPadding: 25, columns: {'taskTitle': {allowableWidth: 450, font: 'Segoe UI', fontSize: 16, align: 'left', fontWeight: 600}, 'startDate': {allowableWidth: 65, font: 'Segoe UI', fontSize: 16, align: 'right'}, 'endDate': {allowableWidth: 65, font: 'Segoe UI', fontSize: 16, align: 'right'}, 'duration': {allowableWidth: 45, font: 'Segoe UI', fontSize: 16, 'align': 'right'}, 'progress': {allowableWidth: 56, font: 'Segoe UI', fontSize: 16, cornerRadius: 4.5}}}"
     },
     {
       "name": "configGantt",
       "description": "configurations for the Gantt",
-      "update": "{x: ganttRange[0], childRect: {cornerRadius: 1, percentOfRowHeight: 0.5}, parentRect: {percentOfRowHeight: 0.25}, label: {xOffset: 7.5, font: 'Segoe UI', fontSize: 11, align: 'left', fontWeight: 400, fill: '#999'}, todayLine: {label: {text: 'Today'}, stroke: '#d6022d', strokeWidth: 0.5, strokeDash: [2,3] }}"
+      "update": "{x: ganttRange[0], childRect: {cornerRadius: 1, percentOfRowHeight: 0.5}, parentRect: {percentOfRowHeight: 0.25}, label: {xOffset: 7.5, font: 'Segoe UI', fontSize: 12, align: 'left', fontWeight: 400, fill: '#999'}, todayLine: {label: {text: 'Today'}, stroke: '#d6022d', strokeWidth: 0.5, strokeDash: [2,3] }}"
     },
     {
       "name": "configVerticalScrollbar",
@@ -619,7 +619,7 @@
               "y": {"value": -5},
               "baseline": {"value": "bottom"},
               "align": {"field": "align"},
-              "fontSize": {"value": 14},
+              "fontSize": {"value": 18},
               "font": {"value": "Segoe UI"},
               "fontWeight": {"value": "600"}
             }
@@ -666,6 +666,28 @@
         }
       }
     },
+{
+  "name": "dias_semana_labels",
+  "type": "text",
+  "from": {"data": "date"},
+  "encode": {
+    "update": {
+      "text": {
+        "signal": "utcFormat(datum.date, '%a')"
+      },
+      "x": {
+        "scale": "xBandScaleDate",
+        "field": "date",
+        "offset": {"signal": "bandwidth('xBandScaleDate')/2"}
+      },
+      "y": {"value": -14},
+      "align": {"value": "center"},
+      "baseline": {"value": "top"},
+      "fontSize": {"value": 13},
+      "fill": {"value": "#666"}
+    }
+  }
+},
     {
       "name": "today_line_rect",
       "description": "the vertical dashed line that indicates today's date in the gantt",
@@ -2831,7 +2853,8 @@
       "transform": [
         {
           "type": "formula",
-          "expr": "timeOffset('day', toDate(utcFormat(now(), '%m/%d/%Y')), -1)",
+          "expr": "toDate(utcFormat(now(), '%m/%d/%Y'))"
+,
           "as": "date"
         },
         {
