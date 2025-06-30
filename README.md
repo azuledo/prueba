@@ -20,7 +20,7 @@
       }
     }
   },
-  "background": "#fff",
+  "background": "transparent",
   "usermeta": {
     "version": "01.01",
     "developedBy": "Madison Giammaria",
@@ -38,7 +38,7 @@
       }
     ]
   },
-  "background": "#fff",
+  "background": "transparent",
   "usermeta": {
     "version": "01.01",
     "developedBy": "Madison Giammaria",
@@ -56,12 +56,12 @@
       }
     ]
   },
-  "height": 800,
+  "height": 580,
   "signals": [
     {
       "name": "configDesiredTotalVisualWidth",
       "description": "The approximate width of the visual. The actual width is impacted by whether vertical scroll is needed.",
-      "update": "1500"
+      "update": "1400"
     },
     {
       "name": "configDateStepSizePercentInital",
@@ -91,7 +91,7 @@
     {
       "name": "configColumn",
       "description": "configurations for the columns that appear to the left of the Gantt",
-      "init": "{xOffset: 5, innerPadding: 25, columns: {'taskTitle': {allowableWidth: 450, font: 'Segoe UI', fontSize: 16, align: 'left', fontWeight: 600}, 'startDate': {allowableWidth: 65, font: 'Segoe UI', fontSize: 16, align: 'right'}, 'endDate': {allowableWidth: 65, font: 'Segoe UI', fontSize: 16, align: 'right'}, 'duration': {allowableWidth: 45, font: 'Segoe UI', fontSize: 16, 'align': 'right'}, 'progress': {allowableWidth: 56, font: 'Segoe UI', fontSize: 16, cornerRadius: 4.5}}}"
+      "init": "{xOffset: 5, innerPadding: 25, columns: {'taskTitle': {allowableWidth: 450, font: 'Segoe UI', fontSize: 16, align: 'left', fontWeight: 600}, 'startDate': {allowableWidth: 65, font: 'Segoe UI', fontSize: 16, align: 'right'}, 'endDate': {allowableWidth: 65, font: 'Segoe UI', fontSize: 16, align: 'right'}, 'duration': {allowableWidth: 55, font: 'Segoe UI', fontSize: 16, 'align': 'right'}, 'progress': {allowableWidth: 56, font: 'Segoe UI', fontSize: 16, cornerRadius: 4.5}}}"
     },
     {
       "name": "configGantt",
@@ -122,7 +122,8 @@
       "name": "showDetailsConfig",
       "description": "configurations for the show details toggle control",
       "update": "{enabled: true, initialValue: true, xOffset: 90, track: {height: 10, width: 25, cornerRadius: 5, fill: '#EEE', stroke: '#777', strokeWidth: 1}, handle: {stroke: '#777', strokeWidth: 1, fill: '#fff'}, label: {text: 'Detalle', font: 'Segoe UI', fontSize: 19, fill: '#666', fontStyle: 'regular', dy: 11}, on: {fill: '#2cb82c', fillOpacity: 1, stroke: '#777', strokeWidth: 1}, tooltip: {text: 'Muestra/Oculta Detalle de columnas'}}"
-    },{
+    },
+    {
   "name": "columnsToShow",
   "description": "Lista de columnas visibles según showDetails",
   "update": "showDetails ? configIncludedLeftHandColumns : ['name']"
@@ -263,7 +264,8 @@
         },
         {"events": {"type": "pointerup"}, "update": "false"}
       ]
-    },
+    }
+,
     {
       "name": "verticalScrollbarMouseOver",
       "description": "boolean indicating whether the vertical scrollbar is currently being moused over",
@@ -981,43 +983,43 @@
               }
             },
             {
-              "name": "task_duration",
-              "type": "text",
-              "description": "calculated number of days between the node's start and end dates",
-              "from": {"data": "hierarchy_master"},
-              "interactive": false,
-              "encode": {
-                "update": {
-                  "text": {
-                    "signal": "showDetails && indexof(configIncludedLeftHandColumns, 'duration') >= 0 ? round((datum.endDate-datum.startDate)/dayInMilliseconds)+' d' : ''"
-                  },
-                  "x": {
-                    "signal": "(pluck(data('LeftHandColumns'), 'x')[indexof(pluck(data('LeftHandColumns'), 'column'), 'duration')])"
-                  },
-                  "y": {
-                    "signal": "configRow.rowHeight*datum.rowNumber+configRow.rowHeight/2"
-                  },
-                  "font": {"signal": "configColumn.columns.duration.font"},
-                  "fontSize": {
-                    "signal": "configColumn.columns.duration.fontSize"
-                  },
-                  "align": {
-                    "signal": "(pluck(data('LeftHandColumns'), 'align')[indexof(pluck(data('LeftHandColumns'), 'column'), 'duration')])"
-                  },
-                  "baseline": {"value": "middle"},
-                  "limit": {
-                    "signal": "configColumn.columns.duration.allowableWidth"
-                  },
-                  "opacity": {"signal": "datum.isVisible && showDetails"},
-                  "fill": {
-                    "signal": "isValid(mouseoverRectDatum) && mouseoverRectDatum.id === datum.id ? '#000' : '#666'"
-                  },
-                  "fontWeight": {
-                    "signal": "isValid(mouseoverRectDatum) && mouseoverRectDatum.id === datum.id ? 500 : 400"
-                  }
-                }
-              }
-            },
+  "name": "task_duration",
+  "type": "text",
+  "description": "calculated number of days between the node's start and end dates, EXCLUDING domingos",
+  "from": {"data": "hierarchy_master"},
+  "interactive": false,
+  "encode": {
+    "update": {
+      "text": {
+        "signal": "showDetails && indexof(configIncludedLeftHandColumns, 'duration') >= 0 ? (round((datum.endDate-datum.startDate)/dayInMilliseconds) - (isValid(datum.domingos) ? datum.domingos : 0)) + ' d' : ''"
+      },
+      "x": {
+        "signal": "(pluck(data('LeftHandColumns'), 'x')[indexof(pluck(data('LeftHandColumns'), 'column'), 'duration')])"
+      },
+      "y": {
+        "signal": "configRow.rowHeight*datum.rowNumber+configRow.rowHeight/2"
+      },
+      "font": {"signal": "configColumn.columns.duration.font"},
+      "fontSize": {
+        "signal": "configColumn.columns.duration.fontSize"
+      },
+      "align": {
+        "signal": "(pluck(data('LeftHandColumns'), 'align')[indexof(pluck(data('LeftHandColumns'), 'column'), 'duration')])"
+      },
+      "baseline": {"value": "middle"},
+      "limit": {
+        "signal": "configColumn.columns.duration.allowableWidth"
+      },
+      "opacity": {"signal": "datum.isVisible && showDetails"},
+      "fill": {
+        "signal": "isValid(mouseoverRectDatum) && mouseoverRectDatum.id === datum.id ? '#000' : '#666'"
+      },
+      "fontWeight": {
+        "signal": "isValid(mouseoverRectDatum) && mouseoverRectDatum.id === datum.id ? 500 : 400"
+      }
+    }
+  }
+},
             {
               "type": "group",
               "name": "progress_column_container_group",
@@ -1253,7 +1255,7 @@
                   "cornerRadius": {
                     "signal": "datum.shapeType === 'parentRect' ? 0 : configGantt.childRect.cornerRadius"
                   },
-                  "fill": {"signal": "background || '#fff'"},
+                  "fill": {"signal": "background || 'transparent'"},
                   "fillOpacity": {"signal": "1"},
                   "strokeOpacity": {
                     "signal": "isValid(mouseoverRectDatum) && mouseoverRectDatum.id === datum.id ? 0.2 : 1"
@@ -1838,6 +1840,8 @@
               "interactive": false,
               "encode": {
                 "update": {
+
+                  
                   "text": {"signal": "showDetailsConfig.label.text || ''"},
                   "baseline": {"value": "top"},
                   "font": {"signal": "showDetailsConfig.label.font"},
